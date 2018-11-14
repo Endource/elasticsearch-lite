@@ -14,7 +14,9 @@ import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.node.InternalSettingsPreparer
 import org.elasticsearch.node.Node
+import org.elasticsearch.plugins.Plugin
 import org.elasticsearch.transport.RemoteTransportException
 import org.elasticsearch.transport.client.PreBuiltTransportClient
 import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient
@@ -183,6 +185,8 @@ class ElasticSearchClientFactory implements ElasticSearchConfigAware {
             settings.put('path.plugins', new File(pluginsDirectory as String).absolutePath)
         }
 
+        def classpathPlugins = esConfig.classpathPlugins ?: []
+
         // Path to the config folder of ES
         def confDirectory = esConfig.path.conf
         if (confDirectory) {
@@ -193,7 +197,7 @@ class ElasticSearchClientFactory implements ElasticSearchConfigAware {
         log.info "Setting embedded ElasticSearch tmp dir to ${tmpDirectory}"
         settings.put("path.home", tmpDirectory)
 
-        Client client = buildLocalClient(settings)
+        Client client = buildLocalClient(settings, classpathPlugins)
         // Wait for the cluster to become alive.
         log.info "Waiting for ElasticSearch YELLOW status."
         client.admin().cluster().health(new ClusterHealthRequest().waitForYellowStatus()).actionGet()
@@ -201,12 +205,12 @@ class ElasticSearchClientFactory implements ElasticSearchConfigAware {
         return client
     }
 
-    Client buildLocalClient(Settings.Builder settings) {
+    Client buildLocalClient(Settings.Builder settings, Collection<Class<? extends Plugin>> classpathPlugins) {
         settings.put("transport.type", "local")
         settings.put("http.enabled", false)
 
         //Build node and get client
-        Node node = new Node(settings.build())
+        Node node = new PluginNode(settings.build(), classpathPlugins)
         node.start()
 
         node.client()
@@ -348,4 +352,13 @@ class ElasticSearchClientFactory implements ElasticSearchConfigAware {
         }
         defaultNumber as int
     }
+
+    private class PluginNode extends Node {
+        PluginNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null),
+                    classpathPlugins);
+        }
+    }
 }
+
+
