@@ -13,7 +13,6 @@ buildscript {
     }
 }
 
-version "0.5.5"
 group "io.github.endource"
 
 apply plugin: 'maven-publish'
