@@ -11,7 +11,7 @@ publishing {
   }
 
    publications {
-       maven(MavenPublication) {
+       mavenJava(MavenPublication) {
            groupId = project.group
            artifactId = 'elasticsearch-lite'
            version = project.version
@@ -21,6 +21,7 @@ publishing {
            artifact javadocJar
 
            pom {
+               name = 'Elasticsearch Lite Grails Plugin'
                description = 'Lightweight Elasticsearch plugin for Grails (for seasoned ES users)'
                url = 'https://github.com/Endource/elasticsearch-lite'
                licenses {
