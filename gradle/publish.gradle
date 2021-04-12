@@ -21,7 +21,6 @@ publishing {
            artifact javadocJar
 
            pom {
-               name = 'My Grails Plugin'
                description = 'Lightweight Elasticsearch plugin for Grails (for seasoned ES users)'
                url = 'https://github.com/Endource/elasticsearch-lite'
                licenses {
@@ -45,64 +44,4 @@ publishing {
            }
        }
    }
-}
-
-File bintrayProperties = project.rootProject.file('bintray.properties')
-if (bintrayProperties.exists()) {
-  Properties properties = new Properties()
-  properties.load(bintrayProperties.newDataInputStream())
-
-  ext {
-    bintrayUsername = properties.bintrayUsername
-    bintrayApiKey = properties.bintrayApiKey
-  }
-
-  grailsPublish {
-    githubSlug = 'marcoscarceles/elasticsearch-lite'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "ElasticSearch Lite"
-    desc = "Lightweight Elasticsearch plugin for Grails (for seasoned ES users)"
-    developers = [marcos: 'Marcos Carceles']
-  }
-} else {
-    grailsPublish {
-    githubSlug = 'marcoscarceles/elasticsearch-lite'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "ElasticSearch Lite"
-    desc = "Lightweight Elasticsearch plugin for Grails (for seasoned ES users)"
-    developers = [marcos: 'Marcos Carceles']
-  }
-}
-
-// Publish gh-pages on github
-apply plugin: "org.ajoberstar.github-pages"
-
-File githubProperties = project.rootProject.file('github.properties')
-if (githubProperties.exists()) {
-  Properties properties = new Properties()
-  properties.load(githubProperties.newDataInputStream())
-
-  ext {
-    githubApiKey = properties.githubApiKey
-  }
-
-  githubPages {
-    repoUri = 'https://github.com/marcoscarceles/elasticsearch-lite.git'
-
-    credentials {
-      username = project.hasProperty('githubApiKey') ? project.githubApiKey : ''
-      password = ''
-    }
-
-    pages {
-      from "${buildDir}/docs"
-    }
-  }
-
-  task publishDocs(dependsOn: [docs, publishGhPages]) << {
-  }
 }
