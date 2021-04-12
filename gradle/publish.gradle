@@ -1,3 +1,52 @@
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = "https://maven.pkg.github.com/endource/elasticsearch-lite"
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+  }
+
+   publications {
+       maven(MavenPublication) {
+           groupId = project.group
+           artifactId = 'elasticsearch-lite'
+           version = project.version
+
+           from components.java
+           artifact sourcesJar
+           artifact javadocJar
+
+           pom {
+               name = 'My Grails Plugin'
+               description = 'Lightweight Elasticsearch plugin for Grails (for seasoned ES users)'
+               url = 'https://github.com/Endource/elasticsearch-lite'
+               licenses {
+                   license {
+                       name = 'The Apache License, Version 2.0'
+                       url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                   }
+               }
+               developers {
+                   developer {
+                       id = 'endource'
+                       name = 'endource'
+                       email = 'paul@endource.com'
+                   }
+               }
+               scm {
+                   connection = 'scm:git:git://github.com/Endource/elasticsearch-lite.git'
+                   developerConnection = 'scm:git:ssh://github.com:endource/elasticsearch-lite.git'
+                   url = 'https://github.com/Endource/elasticsearch-lite/tree/main'
+               }
+           }
+       }
+   }
+}
+
 File bintrayProperties = project.rootProject.file('bintray.properties')
 if (bintrayProperties.exists()) {
   Properties properties = new Properties()

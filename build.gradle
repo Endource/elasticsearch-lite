@@ -13,18 +13,13 @@ buildscript {
     }
 }
 
-plugins {
-    id "com.jfrog.bintray" version "1.7.3"
-}
-
-version "0.5.2"
-group "org.grails.plugins"
+version "0.5.3"
+group "io.github.endource"
 
 apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
 apply plugin: "org.grails.grails-gsp"
 
 ext {
