@@ -19,6 +19,17 @@ publishing {
            from components.java
            artifact sourcesJar
            artifact javadocJar
+           
+           pom.withXml {
+              Node pomNode = asNode()
+              pomNode.dependencies.'*'.findAll() {
+                it.groupId.text().contains("org.grails") || 
+                it.groupId.text().contains("org.hibernate") || 
+                it.groupId.text().contains("org.springframework") || 
+              }.each() {
+                it.parent().remove(it)
+              }
+            }
 
        }
    }
